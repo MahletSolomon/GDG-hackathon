@@ -1,0 +1,427 @@
+Puzzle 1 (Easy): The Case of the Muted Message
+Quest: The "Unseen Warning" Riddle
+The Guild Master has updated the 'Welcome Message' to include a crucial warning for new adventurers, but it's blending into the background! It's supposed to be a bold, striking red, but it remains a dull gray. Find out why this vital message is muted!
+
+Initial State:
+
+A webpage displays a welcome message.
+There's a specific div element intended for a warning message.
+This warning message should be red and bold, but it appears in a default (e.g., gray or black) color and regular font weight.
+
+
+The Code Artifacts:
+
+
+
+
+HTML Structure (index.html):
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Guild</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome, Brave Adventurer!</h1>
+    </header>
+
+    <main>
+        <p>Prepare for your journey into the realms of valor and peril.</p>
+        
+        <div class="warning-message">
+            Beware of the Shadow Lurkers in the Whispering Woods!
+        </div>
+
+        <p>Check your quest log for your first assignment.</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Adventurers Guild</p>
+    </footer>
+</body>
+</html>
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CSS Styles (styles.css):
+
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 20px;
+}
+
+h1 {
+    color: #007bff;
+}
+
+/* This is intended to style the warning message */
+#warning-message { /* Notice the selector here! */
+    color: red;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid red;
+    background-color: #ffeaea;
+}
+
+/* General paragraph styling */
+p {
+    line-height: 1.6;
+}
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+The Clues:
+
+Clue 1: The Visual Inspection
+
+"Observe the 'Warning Message' on the webpage. It's not red and bold as intended. Open your browser's Developer Tools (F12 or Ctrl+Shift+I). Use the 'Elements' tab to inspect the 'Warning Message' div. In the 'Styles' pane, examine the CSS rules applied to this div. Can you see your intended color: red; rule listed? If so, is it crossed out or overridden?"
+(Expected Finding: The div has a class="warning-message". In the Styles panel, the #warning-message rule might not appear at all, or if it does, it's not being applied because of a selector mismatch.)
+Clue 2: The HTML Blueprint Audit
+
+"The Styles panel shows what CSS rules are attempting to apply. Now, look closely at the HTML structure (index.html). Specifically, examine the div element that contains the warning message. What attribute is used to identify this specific div (e.g., id or class)? What is its value?"
+(Expected Finding: The div has class="warning-message".)
+Clue 3: The CSS Rule Book Review
+
+"You've identified how the HTML element is named. Now, compare that naming in index.html with how the CSS rule is written in styles.css. How is the CSS selector trying to target the warning message? Do the HTML attribute and CSS selector match?"
+(Expected Finding: HTML uses class="warning-message", but CSS uses an ID selector #warning-message.)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+The Final Riddle:
+"You have located the reason the warning message is muted! Precisely identify:"
+
+The exact location (file and relevant line/section) of the error.
+The specific nature of the error (what's wrong with the CSS selector).
+How you would fix it (the exact code change needed to make the message red and bold).
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Puzzle 2 (Medium): The Un-Updatable Quest Log (Plain JS)
+Quest: The "Stuck Quest Status" Mystery
+The Guild's new automated Quest Log is faulty! When an adventurer attempts to mark a quest as 'Completed' by clicking the button, nothing happens. The quest status remains 'Active', leaving adventurers frustrated. Uncover why the status is not updating!
+
+Initial State:
+
+A webpage displays a list of quests. Each quest has a "Mark as Completed" button.
+Clicking the button for a quest does not change its status when the page is reloaded. The quest remains "Active".
+The Code Artifacts:
+
+HTML Structure (index.html):
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest Log</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Current Quests</h1>
+    <div id="quest-list-container">
+        <p>Loading quests...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Plain JavaScript (script.js):
+
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const questListContainer = document.getElementById('quest-list-container');
+
+    const fetchQuests = async () => {
+        try {
+            const response = await fetch('/api/quests');
+            const quests = await response.json();
+            renderQuests(quests);
+        } catch (error) {
+            console.error("Failed to fetch quests:", error);
+            questListContainer.innerHTML = '<p>Error loading quests.</p>';
+        }
+    };
+
+    const renderQuests = (quests) => {
+        questListContainer.innerHTML = ''; // Clear previous content
+        if (quests.length === 0) {
+            questListContainer.innerHTML = '<p>No quests available.</p>';
+            return;
+        }
+        quests.forEach(quest => {
+            const questDiv = document.createElement('div');
+            questDiv.innerHTML = `
+                <h3>${quest.title}</h3>
+                <p>Status: ${quest.status}</p>
+                ${quest.status === 'Active' ? `<button data-quest-id="${quest.id}" class="complete-button">Mark as Completed</button>` : ''}
+            `;
+            questListContainer.appendChild(questDiv);
+        });
+
+        // Attach event listeners to newly rendered buttons
+        document.querySelectorAll('.complete-button').forEach(button => {
+            button.addEventListener('click', handleCompleteQuest);
+        });
+    };
+
+    const handleCompleteQuest = async (event) => {
+        const questId = event.target.dataset.questId;
+        console.log(`Attempting to complete quest: ${questId}`);
+        try {
+            // PROBLEM AREA: Missing method or body?
+            const response = await fetch(`/api/quests/${questId}/complete`); // Default is GET!
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log(`Quest ${questId} completion attempted.`);
+            // Re-fetch quests to update UI (assuming successful completion)
+            fetchQuests();
+        } catch (error) {
+            console.error("Failed to complete quest:", error);
+        }
+    };
+
+    fetchQuests(); // Initial fetch on load
+});
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Backend Quest Route (server/routes/quests.js):
+
+// server/routes/quests.js
+const express = require('express');
+const router = express.Router();
+
+// Mock database (simulates persistent storage)
+let questsDb = [
+  { id: 'q1', title: 'Defeat the Goblin King', status: 'Active' },
+  { id: 'q2', title: 'Retrieve the Dragon\'s Hoard', status: 'Active' }
+];
+
+router.get('/', (req, res) => {
+  res.json(questsDb);
+});
+
+router.put('/:id/complete', (req, res) => { // Backend expects a PUT request
+  const questId = req.params.id;
+  const questIndex = questsDb.findIndex(q => q.id === questId);
+
+  if (questIndex !== -1) {
+    questsDb[questIndex].status = 'Completed';
+    res.status(200).json({ message: `Quest ${questId} marked as completed.` });
+  } else {
+    res.status(404).json({ message: 'Quest not found.' });
+  }
+});
+
+module.exports = router;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+The Clues:
+
+Clue 1: The Silent Failure
+
+"Click the 'Mark as Completed' button for any active quest. Observe the UI: nothing changes. Check your browser's Developer Tools, specifically the 'Console' tab. Do you see any JavaScript errors immediately after clicking? Note any messages, paying attention to what handleCompleteQuest logs."
+(Expected Finding: The console log Attempting to complete quest: [id] will appear, but no immediate JavaScript errors. You might see a network error later.)
+Clue 2: The Method Mismatch Audit
+
+"The frontend seems to try sending something, but the server isn't processing it as expected. Go to the 'Network' tab in your Developer Tools. Click the 'Mark as Completed' button again. Look for the request sent to /api/quests/[questId]/complete. What HTTP Request Method (GET, POST, PUT, DELETE, etc.) does the frontend use for this request? What HTTP status code does the server return?"
+(Expected Finding: The frontend uses GET by default. The server will likely return a 404 Not Found or 405 Method Not Allowed because the backend PUT route at that path is not matching a GET request.)
+Clue 3: The Frontend's Missing Instruction
+
+"You've discovered the frontend is using an incorrect HTTP method! Now, examine the handleCompleteQuest function in script.js. Recall how fetch requests are structured to specify the HTTP method. What critical piece of information is missing from the fetch call that would tell the server to update the quest, matching the backend's expectation?"
+(Expected Finding: The fetch call is missing the method option in its configuration object. By default, fetch uses GET.)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+The Final Riddle:
+"You have pinpointed why quests aren't updating! Precisely identify:"
+
+The exact location (file and relevant line/section) of the error.
+The specific nature of the error.
+How you would fix it (the exact code change needed).
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Puzzle 3 (Hard): The Ghostly Inventory Item (React)
+Quest: The "Vanishing Item" Enigma
+A peculiar curse has befallen the 'Adventurer's Inventory'! When a new item is added, it appears for a brief moment, then vanishes from the list. However, if you refresh the entire page, the item is there! This suggests the item is being added to the server, but something is amiss with the frontend's perception. Find the spectral cause!
+
+Initial State:
+
+A webpage shows an inventory list and a form to add a new item.
+When a new item is submitted via the form, it appears briefly in the list, then disappears.
+Refreshing the entire browser page makes the newly added item show up permanently.
+
+
+
+The Code Artifacts:
+
+Frontend Inventory Component (src/components/Inventory.jsx):
+
+// src/components/Inventory.jsx
+import React, { useState, useEffect } from 'react';
+
+function Inventory() {
+  const [items, setItems] = useState([]);
+  const [newItemName, setNewItemName] = useState('');
+
+  // Function to fetch all items
+  const fetchItems = async () => {
+    try {
+      const response = await fetch('/api/inventory');
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      console.error("Failed to fetch inventory:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems(); // Initial fetch
+  }, []);
+
+  const handleAddItem = async (e) => {
+    e.preventDefault();
+    if (!newItemName.trim()) return;
+
+    try {
+      const response = await fetch('/api/inventory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newItemName }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const addedItem = await response.json();
+      // PROBLEM AREA: How is the local state being updated?
+      // This line is the heart of the bug for this puzzle.
+      setItems([...items, addedItem]); 
+      setNewItemName('');
+      console.log("Item added:", addedItem);
+    } catch (error) {
+      console.error("Error adding item:", error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Adventurer's Inventory</h1>
+      <form onSubmit={handleAddItem}>
+        <input
+          type="text"
+          value={newItemName}
+          onChange={(e) => setNewItemName(e.target.value)}
+          placeholder="New Item Name"
+        />
+        <button type="submit">Add Item</button>
+      </form>
+      <h2>Items:</h2>
+      <ul>
+        {items.map(item => (
+          <li key={item.id || item.name}>{item.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+export default Inventory;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Backend Inventory Route (server/routes/inventory.js)
+
+// server/routes/inventory.js
+const express = require('express');
+const router = express.Router();
+const { v4: uuidv4 } = require('uuid'); // For unique IDs
+
+// Mock database
+let inventoryDb = [
+  { id: 'i1', name: 'Health Potion' },
+  { id: 'i2', name: 'Iron Sword' }
+];
+
+router.get('/', (req, res) => {
+  res.json(inventoryDb);
+});
+
+router.post('/', (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).json({ message: 'Item name is required.' });
+  }
+  const newItem = { id: uuidv4(), name };
+  inventoryDb.push(newItem);
+  // Important: Backend responds with the *newly created item*
+  res.status(201).json(newItem);
+});
+
+module.exports = router;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+The Clues:
+
+Clue 1: The Phantom Update
+
+"Add a new item using the form. Observe carefully: it appears, then vanishes shortly after. Immediately after this happens (before refreshing the page), open your browser's Developer Tools and check the 'Network' tab. Find the POST request you just made to /api/inventory. What HTTP Status Code did the server return for this request? What data was in its 'Response' tab?"
+(Expected Finding: The POST request returns 201 Created (or 200 OK), and the response body correctly contains the newly created item with its unique ID.)
+Clue 2: The True Inventory Manifest
+
+"The server confirms the item was created! So, the problem isn't with the backend adding it. Now, try refreshing the entire page (F5 or Ctrl+R). What happens to the item you just added? Go back to the 'Network' tab and look at the initial GET request to /api/inventory that runs on page load. Does this GET request's 'Response' now include your newly added item?"
+(Expected Finding: Yes, the item now appears permanently after the full page refresh. The GET request correctly shows the new item in its response data, confirming the backend is storing it.)
+Clue 3: The Asynchronous Misconception
+
+"The server has the item, and a full page refresh fetches it correctly. This means the issue lies in how the frontend's local state (items) is being updated after the POST request, specifically within the handleAddItem function in src/components/Inventory.jsx. Focus on the line where setItems is called after the response.json() part. There's a subtle flaw in how setItems is used with items in an asynchronous context (like React state updates) that can lead to stale state, especially if the items array hasn't been re-rendered or updated by React yet. Think about how React's setSomething(oldValue => newValue) pattern helps."
+(Expected Finding: The line setItems([...items, addedItem]); closes over the items array's value at the time the handleAddItem function was created. If items has been updated elsewhere since then (e.g., by the useEffect's fetchItems which could re-render before the handleAddItem finishes), this specific items might be an outdated version, leading to the "ghosting" effect.)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+The Final Riddle:
+"You have unraveled the enigma of the vanishing item! Precisely identify:"
+
+The exact location (file and relevant line/section) of the error.
+The specific nature of the error related to frontend state management in React.
+How you would fix it to ensure the inventory updates immediately and correctly without a full page refresh.
+
+
